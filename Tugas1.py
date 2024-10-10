@@ -1,45 +1,39 @@
 import random
 import sys
 
-# Buat DES Table nya
-
-# Table Permutasi awal
 IP = [
     58, 50, 42, 34, 26, 18, 10, 2,
     60, 52, 44, 36, 28, 20, 12, 4,
     62, 54, 46, 38, 30, 22, 14, 6,
     64, 56, 48, 40, 32, 24, 16, 8,
     57, 49, 41, 33, 25, 17, 9, 1,
-    59, 51, 43, 35, 27, 19, 11,3,
-    61,53,45,37,29,21,13,5,
-    63,55,47,39,31,23,15,7
+    59, 51, 43, 35, 27, 19, 11, 3,
+    61, 53, 45, 37, 29, 21, 13, 5,
+    63, 55, 47, 39, 31, 23, 15, 7
 ]
 
-# Table Permutasi akhir
 FP = [
-    40,8,48,16,56,24,64,32,
-    39,7,47,15,55,23,63,31,
-    38,6,46,14,54,22,62,30,
-    37,5,45,13,53,21,61,29,
-    36,4,44,12,52,20,60,28,
-    35,3,43,11,51,19,59,27,
-    34,2,42,10,50,18,58,26,
-    33,1,41,9,49,17,57,25
+    40, 8, 48, 16, 56, 24, 64, 32,
+    39, 7, 47, 15, 55, 23, 63, 31,
+    38, 6, 46, 14, 54, 22, 62, 30,
+    37, 5, 45, 13, 53, 21, 61, 29,
+    36, 4, 44, 12, 52, 20, 60, 28,
+    35, 3, 43, 11, 51, 19, 59, 27,
+    34, 2, 42, 10, 50, 18, 58, 26,
+    33, 1, 41, 9, 49, 17, 57, 25
 ]
 
-# Ekspansi table 32 bit -> 48 bit
 E = [
-    32,1,2,3,4,5,
-    4,5,6,7,8,9,
-    8,9,10,11,12,13,
-    12,13,14,15,16,17,
-    16,17,18,19,20,21,
-    20,21,22,23,24,25,
-    24,25,26,27,28,29,
-    28,29,30,31,32,1
+    32, 1, 2, 3, 4, 5,
+    4, 5, 6, 7, 8, 9,
+    8, 9, 10, 11, 12, 13,
+    12, 13, 14, 15, 16, 17,
+    16, 17, 18, 19, 20, 21,
+    20, 21, 22, 23, 24, 25,
+    24, 25, 26, 27, 28, 29,
+    28, 29, 30, 31, 32, 1
 ]
 
-# Buat Box S nya
 S_BOX = [
     # S1
     [
@@ -99,52 +93,48 @@ S_BOX = [
     ],
 ]
 
-# Permutasi setelah S-box
 P = [
-    16,7,20,21,
-    29,12,28,17,
-    1,15,23,26,
-    5,18,31,10,
-    2,8,24,14,
-    32,27,3,9,
-    19,13,30,6,
-    22,11,4,25
+    16, 7, 20, 21,
+    29, 12, 28, 17,
+    1, 15, 23, 26,
+    5, 18, 31, 10,
+    2, 8, 24, 14,
+    32, 27, 3, 9,
+    19, 13, 30, 6,
+    22, 11, 4, 25
 ]
 
-# PC-1 (Permutasi pilihan 1)
 PC_1 = [
-    57,49,41,33,25,17,9,
-    1,58,50,42,34,26,18,
-    10,2,59,51,43,35,27,
-    19,11,3,60,52,44,36,
-    63,55,47,39,31,23,15,
-    7,62,54,46,38,30,22,
-    14,6,61,53,45,37,29,
-    21,13,5,28,20,12,4
+    57, 49, 41, 33, 25, 17, 9,
+    1, 58, 50, 42, 34, 26, 18,
+    10, 2, 59, 51, 43, 35, 27,
+    19, 11, 3, 60, 52, 44, 36,
+    63, 55, 47, 39, 31, 23, 15,
+    7, 62, 54, 46, 38, 30, 22,
+    14, 6, 61, 53, 45, 37, 29,
+    21, 13, 5, 28, 20, 12, 4
 ]
 
-# PC-2 (Permutasi pilihan 2)
 PC_2 = [
-    14,17,11,24,1,5,
-    3,28,15,6,21,10,
-    23,19,12,4,26,8,
-    16,7,27,20,13,2,
-    41,52,31,37,47,55,
-    30,40,51,45,33,48,
-    44,49,39,56,34,53,
-    46,42,50,36,29,32
+    14, 17, 11, 24, 1, 5,
+    3, 28, 15, 6, 21, 10,
+    23, 19, 12, 4, 26, 8,
+    16, 7, 27, 20, 13, 2,
+    41, 52, 31, 37, 47, 55,
+    30, 40, 51, 45, 33, 48,
+    44, 49, 39, 56, 34, 53,
+    46, 42, 50, 36, 29, 32
 ]
 
-# Angka pergeseran setiap ronde
+
 SHIFT_SCHEDULE = [
-    1,1,2,2,2,2,2,2,
-    1,2,2,2,2,2,2,1
+    1, 3, 2, 1, 3, 4, 1, 1,
+    3, 2, 5, 1, 4, 4, 1, 4
 ]
 
 
-# Fungsi pembantu
+
 def string_to_bit_array(text):
-    """Mengubah string menjadi daftar bit"""
     array = []
     for char in text:
         binval = bin(ord(char))[2:].rjust(8, '0')
@@ -152,7 +142,6 @@ def string_to_bit_array(text):
     return array
 
 def bit_array_to_string(array):
-    """Mengubah daftar bit menjadi string"""
     res = ''.join([str(x) for x in array])
     chars = []
     for i in range(0, len(res), 8):
@@ -163,23 +152,18 @@ def bit_array_to_string(array):
     return ''.join(chars)
 
 def permute(block, table):
-    """Mempermutasikan blok dengan tabel yang diberikan"""
     return [block[x-1] for x in table]
 
 def xor(t1, t2):
-    """Melakukan operasi XOR pada dua daftar"""
     return [x ^ y for x, y in zip(t1, t2)]
 
 def shift_left(block, n):
-    """Menggeser blok ke kiri sebanyak n"""
     return block[n:] + block[:n]
 
 def split(block, n):
-    """Membagi blok menjadi dua bagian"""
     return block[:n], block[n:]
 
 def s_box_substitution(block):
-    """Menerapkan substitusi S-box"""
     result = []
     for i in range(8):
         chunk = block[i*6:(i+1)*6]
@@ -191,7 +175,6 @@ def s_box_substitution(block):
     return result
 
 def generate_keys(key):
-    """Menghasilkan 16 kunci putaran"""
     key = string_to_bit_array(key)
     key = permute(key, PC_1)
     left, right = split(key, 28)
@@ -204,18 +187,19 @@ def generate_keys(key):
         keys.append(round_key)
     return keys
 
+def generate_random_key():
+    return ''.join([chr(random.randint(0, 255)) for _ in range(8)])
+
+
 def pad(text):
-    """Menambahkan padding pada teks agar panjangnya kelipatan 8"""
     pad_len = 8 - (len(text) % 8)
     return text + (chr(pad_len) * pad_len)
 
 def unpad(text):
-    """Menghapus padding dari teks"""
     pad_len = ord(text[-1])
     return text[:-pad_len]
 
 def des_encrypt_block(block, keys):
-    """Mengenkripsi satu blok dengan DES"""
     block = permute(block, IP)
     left, right = split(block, 32)
     for i in range(16):
@@ -229,8 +213,20 @@ def des_encrypt_block(block, keys):
     encrypted = permute(combined, FP)
     return encrypted
 
+def des_encrypt(plaintext, key):
+    plaintext = pad(plaintext)
+    key = key[:8]  
+    keys = generate_keys(key)
+    encrypted = []
+    for i in range(0, len(plaintext), 8):
+        block = plaintext[i:i+8]
+        block = string_to_bit_array(block)
+        encrypted_block = des_encrypt_block(block, keys)
+        encrypted.extend(encrypted_block)
+    return ''.join([str(x) for x in encrypted])
+
+
 def des_decrypt_block(block, keys):
-    """Mendekripsi satu blok dengan DES"""
     block = permute(block, IP)
     left, right = split(block, 32)
     for i in range(15, -1, -1):
@@ -244,21 +240,7 @@ def des_decrypt_block(block, keys):
     decrypted = permute(combined, FP)
     return decrypted
 
-def des_encrypt(plaintext, key):
-    """Mengenkripsi plaintext menggunakan DES"""
-    plaintext = pad(plaintext)
-    key = key[:8]  # DES menggunakan kunci 8-byte
-    keys = generate_keys(key)
-    encrypted = []
-    for i in range(0, len(plaintext), 8):
-        block = plaintext[i:i+8]
-        block = string_to_bit_array(block)
-        encrypted_block = des_encrypt_block(block, keys)
-        encrypted.extend(encrypted_block)
-    return ''.join([str(x) for x in encrypted])
-
 def des_decrypt(ciphertext, key):
-    """Mendekripsi ciphertext menggunakan DES"""
     key = key[:8]
     keys = generate_keys(key)
     decrypted = []
@@ -270,9 +252,7 @@ def des_decrypt(ciphertext, key):
     decrypted_text = bit_array_to_string(decrypted)
     return unpad(decrypted_text)
 
-def generate_random_key():
-    """Menghasilkan kunci acak 8 karakter"""
-    return ''.join([chr(random.randint(0, 255)) for _ in range(8)])
+
 
 def main():
     print("=== Selamat Datang Di User Interfase Enkripsi dan Dekripsi ===")
